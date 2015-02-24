@@ -1,0 +1,7 @@
+BEGIN:VCARD
+VERSION:4.0
+N:{{.LastName}};{{.FirstName}};{{.MiddleName}};
+FN:{{.FormattedName}}
+EMAIL:{{.Email}}
+TEL;TYPE=HOME,VOICE:{{.PhoneNumber}}
+END:VCARD
