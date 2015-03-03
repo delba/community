@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"sync"
 
 	"github.com/delba/community/hackerschool"
 	"github.com/delba/community/model"
@@ -30,14 +29,14 @@ func main() {
 		handle(err)
 	}
 
-	var peopleWG sync.WaitGroup
-	var vcardsWG sync.WaitGroup
+	var peopleCount int
+	peopleChan := make(chan []model.Person)
+	done := make(chan bool)
 
 	batches, err := hackerschool.GetBatches()
 	handle(err)
 
 	for _, batch := range batches {
-		peopleWG.Add(1)
 		go func(batch model.Batch) {
 			batchPath := path.Join(vcardsPath, batch.Name)
 
@@ -48,21 +47,30 @@ func main() {
 			people, err := hackerschool.GetPeople(&batch)
 			handle(err)
 
-			for _, person := range people {
-				vcardsWG.Add(1)
-				go func(person model.Person) {
-					personPath := path.Join(batchPath, person.FormattedName()+".vcard")
-					vcard.Generate(personPath, &person)
-					vcardsWG.Done()
-				}(person)
-			}
-
-			peopleWG.Done()
+			peopleChan <- people
 		}(batch)
 	}
 
-	peopleWG.Wait()
-	vcardsWG.Wait()
+	for range batches {
+		people := <-peopleChan
+
+		for _, person := range people {
+			peopleCount++
+
+			go func(person model.Person) {
+				batchPath := path.Join(vcardsPath, person.Batch.Name)
+				personPath := path.Join(batchPath, person.FormattedName()+".vcard")
+
+				vcard.Generate(personPath, &person)
+
+				done <- true
+			}(person)
+		}
+	}
+
+	for i := 0; i < peopleCount; i++ {
+		<-done
+	}
 
 	fmt.Println("Your vCards have been generated!")
 	err = exec.Command("open", vcardsPath).Run()
