@@ -71,4 +71,5 @@ func main() {
 
 	fmt.Println("Your vCards have been generated!")
 	err = exec.Command("open", vcardsPath).Run()
+	handle(err)
 }
