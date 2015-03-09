@@ -1,11 +1,11 @@
 package hackerschool
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os/exec"
 
 	"github.com/delba/community/model"
@@ -44,15 +44,12 @@ func handle(err error) {
 func GetPeople(batch *model.Batch) ([]model.Person, error) {
 	var people []model.Person
 
-	b := bytes.NewBuffer([]byte{})
-
-	req, err := http.NewRequest("GET", fmt.Sprintf(BaseURL+"/batches/%d/people", batch.ID), b)
+	request, err := getRequest(fmt.Sprintf(BaseURL+"/batches/%d/people", batch.ID))
 	if err != nil {
 		return people, err
 	}
 
-	req.Header.Set("Authorization", "Bearer "+accessToken)
-	res, err := http.DefaultClient.Do(req)
+	res, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return people, err
 	}
@@ -74,14 +71,12 @@ func GetPeople(batch *model.Batch) ([]model.Person, error) {
 func GetBatches() ([]model.Batch, error) {
 	var batches []model.Batch
 
-	b := bytes.NewBuffer([]byte{})
-	req, err := http.NewRequest("GET", BaseURL+"/batches", b)
+	request, err := getRequest(BaseURL + "/batches")
 	if err != nil {
 		return batches, err
 	}
 
-	req.Header.Set("Authorization", "Bearer "+accessToken)
-	res, err := http.DefaultClient.Do(req)
+	res, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return batches, err
 	}
@@ -98,6 +93,20 @@ func GetBatches() ([]model.Batch, error) {
 	}
 
 	return batches, nil
+}
+
+func getRequest(urlStr string) (*http.Request, error) {
+	var err error
+
+	u, err := url.Parse(urlStr)
+
+	request := &http.Request{
+		Method: "GET",
+		URL:    u,
+		Header: http.Header{"Authorization": []string{"Bearer " + accessToken}},
+	}
+
+	return request, err
 }
 
 func Authenticate() error {
