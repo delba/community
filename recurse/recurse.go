@@ -6,33 +6,25 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"os/exec"
 
 	"github.com/delba/community/model"
 	"golang.org/x/oauth2"
 )
 
-const (
-	ClientID     = "2bb3c608d59c16f3749fb75bfe2f54ad5bc268efcbd6d940a2174fbae078f77f"
-	ClientSecret = "bd955c3d40dbf1763e4fc0d8ee38c891c218029bc8d157386a7196d219b21701"
-
-	AuthURL     = "https://www.recurse.com/oauth/authorize"
-	TokenURL    = "https://www.recurse.com/oauth/token"
-	RedirectURL = "urn:ietf:wg:oauth:2.0:oob"
-
-	BaseURL = "https://www.recurse.com/api/v1"
-)
+const BaseURL = "https://www.recurse.com/api/v1"
 
 var accessToken string
 
 var config = oauth2.Config{
-	ClientID:     ClientID,
-	ClientSecret: ClientSecret,
+	ClientID:     os.Getenv("COMMUNITY_CLIENT_ID"),
+	ClientSecret: os.Getenv("COMMUNITY_CLIENT_SECRET"),
 	Endpoint: oauth2.Endpoint{
-		AuthURL:  AuthURL,
-		TokenURL: TokenURL,
+		AuthURL:  "https://www.recurse.com/oauth/authorize",
+		TokenURL: "https://www.recurse.com/oauth/token",
 	},
-	RedirectURL: RedirectURL,
+	RedirectURL: "urn:ietf:wg:oauth:2.0:oob",
 }
 
 func handle(err error) {
