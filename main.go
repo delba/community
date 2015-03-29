@@ -7,7 +7,7 @@ import (
 	"path"
 	"sync"
 
-	"github.com/delba/community/model"
+	"github.com/delba/community/models"
 	"github.com/delba/community/recurse"
 	"github.com/delba/community/vcard"
 )
@@ -31,10 +31,10 @@ func main() {
 		handle(err)
 	}
 
-	c := make(chan []model.Person)
+	c := make(chan []models.Person)
 	var wg sync.WaitGroup
 
-	var batches model.Batches
+	var batches models.Batches
 	err = batches.Fetch()
 	handle(err)
 
@@ -56,7 +56,7 @@ func main() {
 	handle(err)
 }
 
-func GetPeople(b model.Batch, c chan []model.Person) {
+func GetPeople(b models.Batch, c chan []models.Person) {
 	batchPath := path.Join(vcardsPath, b.Name)
 
 	if err := os.Mkdir(batchPath, 0755); os.IsExist(err) {
@@ -69,7 +69,7 @@ func GetPeople(b model.Batch, c chan []model.Person) {
 	c <- b.People
 }
 
-func GenerateVCard(p model.Person, wg *sync.WaitGroup) {
+func GenerateVCard(p models.Person, wg *sync.WaitGroup) {
 	personPath := path.Join(vcardsPath, p.Batch.Name, p.FormattedName()+".vcard")
 	vcard.Generate(personPath, &p)
 	wg.Done()

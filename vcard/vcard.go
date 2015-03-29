@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"text/template"
 
-	"github.com/delba/community/model"
+	"github.com/delba/community/models"
 )
 
 func handle(err error) {
@@ -15,7 +15,7 @@ func handle(err error) {
 	}
 }
 
-func Generate(destinationPath string, person *model.Person) {
+func Generate(destinationPath string, person *models.Person) {
 	dst, err := os.Create(destinationPath)
 	handle(err)
 	defer dst.Close()
