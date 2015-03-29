@@ -34,7 +34,8 @@ func main() {
 	c := make(chan []model.Person)
 	var wg sync.WaitGroup
 
-	batches, err := recurse.GetBatches()
+	var batches model.Batches
+	err = batches.Fetch()
 	handle(err)
 
 	for _, batch := range batches {
@@ -62,10 +63,10 @@ func GetPeople(b model.Batch, c chan []model.Person) {
 		handle(err)
 	}
 
-	people, err := recurse.GetPeople(&b)
+	err := b.FetchPeople()
 	handle(err)
 
-	c <- people
+	c <- b.People
 }
 
 func GenerateVCard(p model.Person, wg *sync.WaitGroup) {

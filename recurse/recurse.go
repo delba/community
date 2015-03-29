@@ -1,15 +1,12 @@
 package recurse
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
 
-	"github.com/delba/community/model"
 	"golang.org/x/oauth2"
 )
 
@@ -33,61 +30,7 @@ func handle(err error) {
 	}
 }
 
-func GetPeople(batch *model.Batch) ([]model.Person, error) {
-	var people []model.Person
-
-	request, err := getRequest(fmt.Sprintf(BaseURL+"/batches/%d/people", batch.ID))
-	if err != nil {
-		return people, err
-	}
-
-	res, err := http.DefaultClient.Do(request)
-	if err != nil {
-		return people, err
-	}
-
-	contents, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return people, err
-	}
-	defer res.Body.Close()
-
-	err = json.Unmarshal(contents, &people)
-	if err != nil {
-		return people, err
-	}
-
-	return people, nil
-}
-
-func GetBatches() ([]model.Batch, error) {
-	var batches []model.Batch
-
-	request, err := getRequest(BaseURL + "/batches")
-	if err != nil {
-		return batches, err
-	}
-
-	res, err := http.DefaultClient.Do(request)
-	if err != nil {
-		return batches, err
-	}
-
-	contents, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return batches, err
-	}
-	defer res.Body.Close()
-
-	err = json.Unmarshal(contents, &batches)
-	if err != nil {
-		return batches, err
-	}
-
-	return batches, nil
-}
-
-func getRequest(urlStr string) (*http.Request, error) {
+func GetRequest(urlStr string) (*http.Request, error) {
 	var err error
 
 	u, err := url.Parse(urlStr)
