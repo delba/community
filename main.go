@@ -31,16 +31,17 @@ func main() {
 		handle(err)
 	}
 
-	c := make(chan []models.Person)
-	var wg sync.WaitGroup
-
 	var batches models.Batches
 	err = batches.Fetch()
 	handle(err)
 
+	c := make(chan []models.Person)
+
 	for _, batch := range batches {
 		go GetPeople(batch, c)
 	}
+
+	var wg sync.WaitGroup
 
 	for range batches {
 		for _, person := range <-c {
