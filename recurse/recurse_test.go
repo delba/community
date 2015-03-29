@@ -1,4 +1,4 @@
-package hackerschool
+package recurse
 
 import "testing"
 

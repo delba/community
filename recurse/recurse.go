@@ -1,4 +1,4 @@
-package hackerschool
+package recurse
 
 import (
 	"encoding/json"
@@ -16,11 +16,11 @@ const (
 	ClientID     = "2bb3c608d59c16f3749fb75bfe2f54ad5bc268efcbd6d940a2174fbae078f77f"
 	ClientSecret = "bd955c3d40dbf1763e4fc0d8ee38c891c218029bc8d157386a7196d219b21701"
 
-	AuthURL     = "https://www.hackerschool.com/oauth/authorize"
-	TokenURL    = "https://www.hackerschool.com/oauth/token"
+	AuthURL     = "https://www.recurse.com/oauth/authorize"
+	TokenURL    = "https://www.recurse.com/oauth/token"
 	RedirectURL = "urn:ietf:wg:oauth:2.0:oob"
 
-	BaseURL = "https://www.hackerschool.com/api/v1"
+	BaseURL = "https://www.recurse.com/api/v1"
 )
 
 var accessToken string

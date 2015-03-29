@@ -7,8 +7,8 @@ import (
 	"path"
 	"sync"
 
-	"github.com/delba/community/hackerschool"
 	"github.com/delba/community/model"
+	"github.com/delba/community/recurse"
 	"github.com/delba/community/vcard"
 )
 
@@ -21,7 +21,7 @@ func handle(err error) {
 }
 
 func main() {
-	err := hackerschool.Authenticate()
+	err := recurse.Authenticate()
 	handle(err)
 
 	fmt.Println("Directory name for the vCards please:")
@@ -34,7 +34,7 @@ func main() {
 	c := make(chan []model.Person)
 	var wg sync.WaitGroup
 
-	batches, err := hackerschool.GetBatches()
+	batches, err := recurse.GetBatches()
 	handle(err)
 
 	for _, batch := range batches {
@@ -62,7 +62,7 @@ func GetPeople(b model.Batch, c chan []model.Person) {
 		handle(err)
 	}
 
-	people, err := hackerschool.GetPeople(&b)
+	people, err := recurse.GetPeople(&b)
 	handle(err)
 
 	c <- people
